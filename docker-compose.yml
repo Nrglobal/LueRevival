@@ -16,6 +16,9 @@ services:
       interval: 30s
       timeout: 5s
       retries: 5
+    networks:
+      - default
+      - cloudfyr_caddy
 
   db:
     image: postgres:16-alpine
@@ -32,3 +35,8 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  cloudfyr_caddy:
+    external: true
+    name: headscale-stack-cloudfyr-v31_default
