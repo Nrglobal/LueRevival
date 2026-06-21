@@ -111,9 +111,9 @@ npm run verify
 5. Do not expose Postgres publicly.
 6. Run `docker compose pull && docker compose up -d --build` for updates.
 
-### Nathan-style Caddy integration
+### Caddy integration
 
-If deploying on Nathan's VPS with the existing containerized Caddy stack, use the optional override:
+If deploying on a VPS with the existing containerized Caddy stack, use the optional override:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.caddy-example.yml up -d --build
@@ -122,31 +122,12 @@ docker compose -f docker-compose.yml -f docker-compose.caddy-example.yml up -d -
 Then add a Caddyfile block like:
 
 ```caddyfile
-lue.cloudfyr.com {
+lue.[YOURSITEHERE].com {
   reverse_proxy luerevival-app:3000
 }
 ```
 
 Important: because Caddy is containerized, do **not** reverse proxy to `127.0.0.1:3000` from inside Caddy unless the app is in the same container. Use the service/container name over the shared Docker network.
-
-## Repo publication
-
-If GitHub auth is configured locally:
-
-```bash
-git init
-git add -A
-git commit -m "Initial LueRevival modern AlpacaBoards rewrite"
-gh repo create LueRevival --public --source . --push
-```
-
-Without `gh`:
-
-```bash
-git remote add origin https://github.com/YOUR_USER/LueRevival.git
-git branch -M main
-git push -u origin main
-```
 
 ## License
 
