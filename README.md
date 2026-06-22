@@ -47,7 +47,7 @@ Core AlpacaBoards parity targets included in this revision:
 ## Quick start with Docker
 
 ```bash
-git clone https://github.com/YOUR_USER/LueRevival.git
+git clone https://github.com/Nrglobal/LueRevival.git
 cd LueRevival
 cp .env.example .env
 ```
