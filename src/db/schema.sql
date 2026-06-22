@@ -271,6 +271,7 @@ ALTER TABLE IF EXISTS topical_tags ADD COLUMN IF NOT EXISTS mutually_exclusive_t
 ALTER TABLE IF EXISTS topical_tags ADD COLUMN IF NOT EXISTS dependent_tags text NOT NULL DEFAULT '';
 ALTER TABLE IF EXISTS topical_tags ADD COLUMN IF NOT EXISTS moderators text NOT NULL DEFAULT '';
 ALTER TABLE IF EXISTS topical_tags ADD COLUMN IF NOT EXISTS administrators text NOT NULL DEFAULT '';
+ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS show_email boolean NOT NULL DEFAULT false;
 
 CREATE INDEX IF NOT EXISTS idx_topics_board_updated ON topics(board_id, updated_at DESC);
 CREATE INDEX IF NOT EXISTS idx_messages_topic_posted ON messages(topic_id, posted_at ASC);

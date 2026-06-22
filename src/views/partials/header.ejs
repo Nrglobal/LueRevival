@@ -11,7 +11,7 @@
   <div><a href="/">Home</a> | <a href="/source">Wiki</a> | <a href="/admin">Stats</a> | <a href="/admin/users">User List</a> | <a href="/source">Help</a>
   <% if (currentUser) { %> | <form class="inline" method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="link-button">Logout</button></form><% } else { %> | <a href="/login">Login</a><% } %></div>
   <div>
-    <a href="/boards/1">Archived</a> | ~~ <strong><%= currentUser ? currentUser.username : 'Guest' %></strong> ~~ | <a href="/boards/1">Anon</a> | <a href="/links">TinyChat</a> | <a href="/admin/tags">Tag Administration</a> | <a href="/images">Parenting</a> | <a href="/shop">Subscribed</a> | <a href="/admin">Complaints</a> | <a href="/boards/1/new">[+]</a>
+    <a href="/boards/1">Archived</a> | ~~ <% if (currentUser) { %><strong><a href="/u/<%= encodeURIComponent(currentUser.username) %>"><%= currentUser.username %></a></strong> ~~ | <a href="/settings/profile">Edit Profile</a><% } else { %><strong>Guest</strong> ~~<% } %> | <a href="/boards/1">Anon</a> | <a href="/links">TinyChat</a> | <a href="/admin/tags">Tag Administration</a> | <a href="/images">Parenting</a> | <a href="/shop">Subscribed</a> | <a href="/admin">Complaints</a> | <a href="/boards/1/new">[+]</a>
   </div>
 </div>
 <div class="page-wrap">

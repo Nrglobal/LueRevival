@@ -251,19 +251,23 @@ app.post('/register', asyncHandler(async (req, res) => {
 
 app.get('/u/:username', asyncHandler(async (req, res) => {
   const user = await query(`
-    SELECT u.id, u.username, u.email, u.instant_messaging, u.avatar_url, u.signature, u.quote, u.timezone,
+    SELECT u.id, u.username, u.email, u.show_email, u.instant_messaging, u.avatar_url, u.signature, u.quote, u.timezone,
       u.karma, u.good_tokens, u.bad_tokens, u.account_created, u.last_active, u.status, sp.title AS staff_title
     FROM users u LEFT JOIN staff_positions sp ON sp.id=u.staff_position_id
     WHERE lower(u.username)=lower($1)
   `, [req.params.username]);
   if (!user.rows[0]) return res.status(404).render('error', { message: 'User not found' });
-  const topics = await query('SELECT id, title, updated_at FROM topics WHERE user_id=$1 AND deleted=false ORDER BY updated_at DESC LIMIT 10', [user.rows[0].id]);
+  const profile = user.rows[0];
+  const cu = res.locals.currentUser;
+  const canSeeEmail = profile.show_email || (cu && (cu.id === profile.id || cu.access_level >= 50));
+  if (!canSeeEmail) profile.email = null;
+  const topics = await query('SELECT id, title, updated_at FROM topics WHERE user_id=$1 AND deleted=false ORDER BY updated_at DESC LIMIT 10', [profile.id]);
   const tagRows = await query(`SELECT id,title,moderators,administrators FROM topical_tags ORDER BY title`);
-  const usernameKey = user.rows[0].username.toLowerCase();
+  const usernameKey = profile.username.toLowerCase();
   const names = (value) => String(value || '').split(/[;,]/).map(v => v.trim().toLowerCase()).filter(Boolean);
   const adminTags = tagRows.rows.filter(t => names(t.administrators).includes(usernameKey));
   const modTags = tagRows.rows.filter(t => names(t.moderators).includes(usernameKey));
-  res.render('profile', { profile: user.rows[0], topics: topics.rows, adminTags, modTags });
+  res.render('profile', { profile, topics: topics.rows, adminTags, modTags });
 }));
 app.post('/u/:username/token', requireAuth, asyncHandler(async (req, res) => {
   const kind = req.body.kind === 'bad' ? 'bad' : 'good';
@@ -277,7 +281,7 @@ app.post('/u/:username/token', requireAuth, asyncHandler(async (req, res) => {
 app.get('/settings/profile', requireAuth, (req, res) => res.render('profile_edit'));
 app.post('/settings/profile', requireAuth, asyncHandler(async (req, res) => {
   const avatarUrl = req.body.avatar_url ? safeHttpUrl(req.body.avatar_url) : null;
-  await query(`UPDATE users SET email=$1, private_email=$2, instant_messaging=$3, avatar_url=$4, signature=$5, quote=$6, timezone=$7 WHERE id=$8`, [req.body.email || null, req.body.private_email || null, req.body.instant_messaging || null, avatarUrl, req.body.signature || null, req.body.quote || null, req.body.timezone || 'UTC', res.locals.currentUser.id]);
+  await query(`UPDATE users SET email=$1, private_email=$2, instant_messaging=$3, avatar_url=$4, signature=$5, quote=$6, timezone=$7, show_email=$8 WHERE id=$9`, [req.body.email || null, req.body.private_email || null, req.body.instant_messaging || null, avatarUrl, req.body.signature || null, req.body.quote || null, req.body.timezone || 'UTC', !!req.body.show_email, res.locals.currentUser.id]);
   await audit(res.locals.currentUser.id, 'profile.update', 'user', res.locals.currentUser.id);
   req.flash('info', 'Profile updated.');
   res.redirect(`/u/${encodeURIComponent(res.locals.currentUser.username)}`);

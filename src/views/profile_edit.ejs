@@ -2,6 +2,7 @@
 <h2>Edit profile</h2>
 <form method="post" action="/settings/profile" class="classic-form"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
 <label>Email <input name="email" value="<%= currentUser.email || '' %>"></label><br>
+<label>Show email on public profile <input type="checkbox" name="show_email" value="1"<%= currentUser.show_email ? ' checked' : '' %>></label><br>
 <label>Private Email <input name="private_email" value="<%= currentUser.private_email || '' %>"></label><br>
 <label>Instant Messaging <input name="instant_messaging" value="<%= currentUser.instant_messaging || '' %>"></label><br>
 <label>Picture URL <input name="avatar_url" size="80" value="<%= currentUser.avatar_url || '' %>"></label><br>
