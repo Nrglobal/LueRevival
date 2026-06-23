@@ -1,4 +1,4 @@
-# LueRevival
+# LUERevival
 
 LueRevival is a modern, Docker-ready revival of **[acjordan2/AlpacaBoards](https://github.com/acjordan2/AlpacaBoards)**. The goal is not to make a generic modern forum. The goal is to preserve the nostalgic gray/blue, small-font, table-heavy board feel while replacing the outdated PHP 5/MySQL/Sphinx backend with a maintainable Node/Postgres stack.
 
